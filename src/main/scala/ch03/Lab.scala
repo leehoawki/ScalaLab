@@ -24,5 +24,18 @@ object xList {
 }
 
 object Lab {
+  def tail[A](l: xList[A]): xList[A] = l match {
+    case xNil => xNil
+    case xCons(_, t) => t
+  }
 
+  def setHead[A](head: A, tail: xList[A]): xList[A] = xCons(head, tail)
+
+  def drop[A](l: xList[A], n: Int): xList[A] = {
+    xNil
+  }
+
+  def dropWhile[A](l: xList[A], f: A => Boolean): xList[A] = {
+    xNil
+  }
 }
