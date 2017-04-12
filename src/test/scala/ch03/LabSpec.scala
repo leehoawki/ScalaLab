@@ -24,8 +24,21 @@ class LabSpec extends FlatSpec with Matchers {
 
   "SetHead" should "be correct" in {
     Lab.setHead(0, MyList(1, 2, 3)) shouldEqual MyList(0, 1, 2, 3)
-    Lab.setHead(0, MyList()) shouldEqual MyList(0)
     Lab.setHead(0, MyNil) shouldEqual MyList(0)
   }
 
+  "Drop" should "be correct" in {
+    Lab.drop(MyList(1, 2, 3), -1) shouldEqual MyList( 1, 2, 3)
+    Lab.drop(MyList(1, 2, 3), 0) shouldEqual MyList(1, 2, 3)
+    Lab.drop(MyList(1, 2, 3), 1) shouldEqual MyList(2, 3)
+    Lab.drop(MyList(1, 2, 3), 3) shouldEqual MyList(3)
+    Lab.drop(MyList(1, 2, 3), 4) shouldEqual MyNil
+    Lab.drop(MyNil, -1) shouldEqual MyNil
+    Lab.drop(MyNil, 0) shouldEqual MyNil
+    Lab.drop(MyNil, 1) shouldEqual MyNil
+  }
+
+  "DropWhile" should "be correct" in {
+
+  }
 }
