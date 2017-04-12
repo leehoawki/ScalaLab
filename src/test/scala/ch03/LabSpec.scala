@@ -6,11 +6,13 @@ class LabSpec extends FlatSpec with Matchers {
   "xList" should "be correct" in {
     xList.sum(xNil) shouldEqual 0
     xList.sum(xList()) shouldEqual 0
-    xList.sum(xList(1,2,3,4)) shouldEqual 10
+    xList.sum(xList(1)) shouldEqual 1
+    xList.sum(xList(1, 2, 3, 4)) shouldEqual 10
 
     xList.product(xNil) shouldEqual 1
     xList.product(xList()) shouldEqual 1
-    xList.product(xList(1,2,3,4)) shouldEqual 24
+    xList.product(xList(1)) shouldEqual 1
+    xList.product(xList(1, 2, 3, 4)) shouldEqual 24
   }
 
   "Tail" should "be correct" in {
