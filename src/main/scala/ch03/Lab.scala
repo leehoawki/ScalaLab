@@ -1,41 +1,41 @@
 package ch03
 
-sealed trait xList[+A]
+sealed trait MyList[+A]
 
-case object xNil extends xList[Nothing]
+case object MyNil extends MyList[Nothing]
 
-case class xCons[+A](head: A, tail: xList[A]) extends xList[A]
+case class MyCons[+A](head: A, tail: MyList[A]) extends MyList[A]
 
-object xList {
-  def sum(ints: xList[Int]): Int = ints match {
-    case xNil => 0
-    case xCons(x, xs) => x + sum(xs)
+object MyList {
+  def sum(ints: MyList[Int]): Int = ints match {
+    case MyNil => 0
+    case MyCons(x, xs) => x + sum(xs)
   }
 
-  def product(ints: xList[Double]): Double = ints match {
-    case xNil => 1
-    case xCons(0, _) => 0
-    case xCons(x, xs) => x * product(xs)
+  def product(ints: MyList[Double]): Double = ints match {
+    case MyNil => 1
+    case MyCons(0, _) => 0
+    case MyCons(x, xs) => x * product(xs)
   }
 
-  def apply[A](as: A*): xList[A] =
-    if (as.isEmpty) xNil
-    else xCons(as.head, apply(as.tail: _*))
+  def apply[A](as: A*): MyList[A] =
+    if (as.isEmpty) MyNil
+    else MyCons(as.head, apply(as.tail: _*))
 }
 
 object Lab {
-  def tail[A](l: xList[A]): xList[A] = l match {
-    case xNil => xNil
-    case xCons(_, t) => t
+  def tail[A](l: MyList[A]): MyList[A] = l match {
+    case MyNil => MyNil
+    case MyCons(_, t) => t
   }
 
-  def setHead[A](head: A, tail: xList[A]): xList[A] = xCons(head, tail)
+  def setHead[A](head: A, tail: MyList[A]): MyList[A] = MyCons(head, tail)
 
-  def drop[A](l: xList[A], n: Int): xList[A] = {
-    xNil
+  def drop[A](l: MyList[A], n: Int): MyList[A] = {
+    MyNil
   }
 
-  def dropWhile[A](l: xList[A], f: A => Boolean): xList[A] = {
-    xNil
+  def dropWhile[A](l: MyList[A], f: A => Boolean): MyList[A] = {
+    MyNil
   }
 }
