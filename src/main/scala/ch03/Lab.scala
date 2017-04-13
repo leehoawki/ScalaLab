@@ -1,5 +1,7 @@
 package ch03
 
+import scala.annotation.tailrec
+
 sealed trait MyList[+A]
 
 case object MyNil extends MyList[Nothing]
@@ -31,11 +33,18 @@ object Lab {
 
   def setHead[A](head: A, tail: MyList[A]): MyList[A] = MyCons(head, tail)
 
+  @tailrec
   def drop[A](l: MyList[A], n: Int): MyList[A] = {
-    MyNil
+    if (n <= 0) l
+    else l match {
+      case MyNil => MyNil
+      case MyCons(_, t) => drop(t, n - 1)
+    }
   }
 
-  def dropWhile[A](l: MyList[A], f: A => Boolean): MyList[A] = {
-    MyNil
+  @tailrec
+  def dropWhile[A](l: MyList[A], f: A => Boolean): MyList[A] = l match {
+    case MyNil => MyNil
+    case MyCons(h, t) => if (f(h)) dropWhile(t, f) else l
   }
 }

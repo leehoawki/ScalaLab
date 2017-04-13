@@ -28,10 +28,11 @@ class LabSpec extends FlatSpec with Matchers {
   }
 
   "Drop" should "be correct" in {
-    Lab.drop(MyList(1, 2, 3), -1) shouldEqual MyList( 1, 2, 3)
+    Lab.drop(MyList(1, 2, 3), -1) shouldEqual MyList(1, 2, 3)
     Lab.drop(MyList(1, 2, 3), 0) shouldEqual MyList(1, 2, 3)
     Lab.drop(MyList(1, 2, 3), 1) shouldEqual MyList(2, 3)
-    Lab.drop(MyList(1, 2, 3), 3) shouldEqual MyList(3)
+    Lab.drop(MyList(1, 2, 3), 2) shouldEqual MyList(3)
+    Lab.drop(MyList(1, 2, 3), 3) shouldEqual MyNil
     Lab.drop(MyList(1, 2, 3), 4) shouldEqual MyNil
     Lab.drop(MyNil, -1) shouldEqual MyNil
     Lab.drop(MyNil, 0) shouldEqual MyNil
@@ -39,6 +40,9 @@ class LabSpec extends FlatSpec with Matchers {
   }
 
   "DropWhile" should "be correct" in {
-
+    Lab.dropWhile(MyList(1, 2, 3), (x => x > 0): Int => Boolean) shouldEqual MyNil
+    Lab.dropWhile(MyList(1, 2, 3), (x => x < 0): Int => Boolean) shouldEqual MyList(1, 2, 3)
+    Lab.dropWhile(MyList(1, 2, 3), (x => x < 2): Int => Boolean) shouldEqual MyList(2, 3)
+    Lab.dropWhile(MyNil, (x => x < 0): Int => Boolean) shouldEqual MyNil
   }
 }
