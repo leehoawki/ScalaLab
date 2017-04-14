@@ -47,4 +47,41 @@ object Lab {
     case MyNil => MyNil
     case MyCons(h, t) => if (f(h)) dropWhile(t, f) else l
   }
+
+  @tailrec
+  def dropWhile2[A](l: MyList[A])(f: A => Boolean): MyList[A] = l match {
+    case MyNil => MyNil
+    case MyCons(h, t) => if (f(h)) dropWhile2(t)(f) else l
+  }
+
+  def init[A](l: MyList[A]): MyList[A] = l match {
+    case MyNil => MyNil
+    case MyCons(_, MyNil) => MyNil
+    case MyCons(h, t) => MyCons(h, init(t))
+  }
+
+  def foldRight[A, B](as: MyList[A], z: B)(f: (A, B) => B): B = as match {
+    case MyNil => z
+    case MyCons(x, xs) => f(x, foldRight(xs, z)(f))
+  }
+
+  @tailrec
+  def foldLeft[A, B](as: MyList[A], z: B)(f: (B, A) => B): B = as match {
+    case MyNil => z
+    case MyCons(x, xs) => foldLeft(xs, f(z, x))(f)
+  }
+
+  def length[A](as: MyList[A]): Int = foldRight(as, 0)((_, y) => y + 1)
+
+  def length2[A](as: MyList[A]): Int = foldLeft(as, 0)((y, _) => y + 1)
+
+  def sum(as: MyList[Int]): Int = foldLeft(as, 0)((x, y) => x + y)
+
+  def products(as: MyList[Double]): Double = foldLeft(as, 1.0)((x, y) => x * y)
+
+  def reverse[A](as: MyList[A]): MyList[A] = MyNil //TODO
+
+  def foldLeft2[A, B](as: MyList[A], z: B)(f: (B, A) => B): B = z //TODO
+
+  def append[A](a1: MyList[A], a2: MyList[A]): MyList[A] = MyNil //TODO
 }

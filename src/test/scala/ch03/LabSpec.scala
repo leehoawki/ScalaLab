@@ -40,9 +40,35 @@ class LabSpec extends FlatSpec with Matchers {
   }
 
   "DropWhile" should "be correct" in {
-    Lab.dropWhile(MyList(1, 2, 3), (x => x > 0): Int => Boolean) shouldEqual MyNil
-    Lab.dropWhile(MyList(1, 2, 3), (x => x < 0): Int => Boolean) shouldEqual MyList(1, 2, 3)
-    Lab.dropWhile(MyList(1, 2, 3), (x => x < 2): Int => Boolean) shouldEqual MyList(2, 3)
-    Lab.dropWhile(MyNil, (x => x < 0): Int => Boolean) shouldEqual MyNil
+    Lab.dropWhile(MyList(1, 2, 3), (x: Int) => x < 0) shouldEqual MyNil
+    Lab.dropWhile(MyList(1, 2, 3), (x: Int) => x < 0) shouldEqual MyList(1, 2, 3)
+    Lab.dropWhile(MyList(1, 2, 3), (x: Int) => x < 2) shouldEqual MyList(2, 3)
+    Lab.dropWhile(MyNil, (x: Int) => x < 0) shouldEqual MyNil
+
+    Lab.dropWhile2(MyList(1, 2, 3))(x => x < 0) shouldEqual MyNil
+  }
+
+  "Init" should "be correct" in {
+    Lab.init(MyList(1, 2, 3)) shouldEqual MyList(1, 2)
+    Lab.init(MyList(1)) shouldEqual MyNil
+    Lab.init(MyNil) shouldEqual MyNil
+  }
+
+  "Length" should "be correct" in {
+    Lab.length(MyList(1, 2, 3)) shouldEqual 3
+    Lab.length(MyList(1)) shouldEqual 1
+    Lab.length(MyNil) shouldEqual 0
+
+    Lab.length2(MyList(1, 2, 3)) shouldEqual 3
+    Lab.length2(MyList(1)) shouldEqual 1
+    Lab.length2(MyNil) shouldEqual 0
+  }
+
+  "Reverse" should "be correct" in {
+
+  }
+
+  "Append" should "be correct" in {
+
   }
 }
