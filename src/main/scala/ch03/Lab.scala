@@ -93,9 +93,9 @@ object Lab {
 
   def appendAll[A](as: MyList[MyList[A]]): MyList[A] = foldRight(as, MyNil: MyList[A])(append)
 
-  def map[A, B](as: MyList[A])(f: A => B): MyList[B] = MyNil
+  def map[A, B](as: MyList[A])(f: A => B): MyList[B] = foldRight(as, MyNil: MyList[B])((x, y) => MyCons(f(x), y))
 
-  def filter[A](as: MyList[A])(f: A => Boolean): MyList[A] = MyNil
+  def filter[A](as: MyList[A])(f: A => Boolean): MyList[A] = foldRight(as, MyNil: MyList[A] )((x, y) => if (f(x)) MyCons(x, y) else y)
 
   def flatMap[A, B](as: MyList[A])(f: A => MyList[B]): MyList[B] = MyNil
 
@@ -104,5 +104,4 @@ object Lab {
   def zipWith[A, B](a1: MyList[A], a2: MyList[A])(f: (A, A) => B): MyList[B] = MyNil
 
   def hasSubsequence[A](sup: MyList[A], sub: MyList[A]): Boolean = false
-
 }

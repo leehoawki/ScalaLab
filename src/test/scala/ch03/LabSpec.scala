@@ -76,7 +76,6 @@ class LabSpec extends FlatSpec with Matchers {
     Lab.append(MyList(4, 5, 6), MyNil) shouldEqual MyList(4, 5, 6)
     Lab.append(MyNil, MyNil) shouldEqual MyNil
 
-
     Lab.appendAll(MyList(MyList(1, 2, 3), MyList(4, 5, 6))) shouldEqual MyList(1, 2, 3, 4, 5, 6)
     Lab.appendAll(MyList(MyList(1, 2, 3), MyList(4, 5, 6), MyList(7, 8, 9))) shouldEqual MyList(1, 2, 3, 4, 5, 6, 7, 8, 9)
     Lab.appendAll(MyList(MyNil, MyList(4, 5, 6), MyList(7, 8, 9))) shouldEqual MyList(4, 5, 6, 7, 8, 9)
