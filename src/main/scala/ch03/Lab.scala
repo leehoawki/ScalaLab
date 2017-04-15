@@ -65,23 +65,44 @@ object Lab {
     case MyCons(x, xs) => f(x, foldRight(xs, z)(f))
   }
 
+  def length[A](as: MyList[A]): Int = foldRight(as, 0)((_, y) => y + 1)
+
   @tailrec
   def foldLeft[A, B](as: MyList[A], z: B)(f: (B, A) => B): B = as match {
     case MyNil => z
     case MyCons(x, xs) => foldLeft(xs, f(z, x))(f)
   }
 
-  def length[A](as: MyList[A]): Int = foldRight(as, 0)((_, y) => y + 1)
+  def foldLeft2[A, B](as: MyList[A], z: B)(f: (B, A) => B): B = {
+    def step(x: A, g: B => B)(b: B) = g(f(b, x))
 
-  def length2[A](as: MyList[A]): Int = foldLeft(as, 0)((y, _) => y + 1)
+    val id: B => B = x => x
 
-  def sum(as: MyList[Int]): Int = foldLeft(as, 0)((x, y) => x + y)
+    foldRight(as, id)(step)(z)
+  }
 
-  def products(as: MyList[Double]): Double = foldLeft(as, 1.0)((x, y) => x * y)
+  def length2[A](as: MyList[A]): Int = foldLeft2(as, 0)((y, _) => y + 1)
 
-  def reverse[A](as: MyList[A]): MyList[A] = MyNil //TODO
+  def sum(as: MyList[Int]): Int = foldLeft2(as, 0)(_ + _)
 
-  def foldLeft2[A, B](as: MyList[A], z: B)(f: (B, A) => B): B = z //TODO
+  def products(as: MyList[Double]): Double = foldLeft2(as, 1.0)(_ * _)
 
-  def append[A](a1: MyList[A], a2: MyList[A]): MyList[A] = MyNil //TODO
+  def reverse[A](as: MyList[A]): MyList[A] = foldLeft2(as, MyNil: MyList[A])((x, y) => MyCons(y, x))
+
+  def append[A](a1: MyList[A], a2: MyList[A]): MyList[A] = foldRight(a1, a2)((x, y) => MyCons(x, y))
+
+  def appendAll[A](as: MyList[MyList[A]]): MyList[A] = foldRight(as, MyNil: MyList[A])(append)
+
+  def map[A, B](as: MyList[A])(f: A => B): MyList[B] = MyNil
+
+  def filter[A](as: MyList[A])(f: A => Boolean): MyList[A] = MyNil
+
+  def flatMap[A, B](as: MyList[A])(f: A => MyList[B]): MyList[B] = MyNil
+
+  def filter2[A](as: MyList[A])(f: A => Boolean): MyList[A] = MyNil
+
+  def zipWith[A, B](a1: MyList[A], a2: MyList[A])(f: (A, A) => B): MyList[B] = MyNil
+
+  def hasSubsequence[A](sup: MyList[A], sub: MyList[A]): Boolean = false
+
 }

@@ -40,12 +40,12 @@ class LabSpec extends FlatSpec with Matchers {
   }
 
   "DropWhile" should "be correct" in {
-    Lab.dropWhile(MyList(1, 2, 3), (x: Int) => x < 0) shouldEqual MyNil
+    Lab.dropWhile(MyList(1, 2, 3), (x: Int) => x > 0) shouldEqual MyNil
     Lab.dropWhile(MyList(1, 2, 3), (x: Int) => x < 0) shouldEqual MyList(1, 2, 3)
     Lab.dropWhile(MyList(1, 2, 3), (x: Int) => x < 2) shouldEqual MyList(2, 3)
     Lab.dropWhile(MyNil, (x: Int) => x < 0) shouldEqual MyNil
 
-    Lab.dropWhile2(MyList(1, 2, 3))(x => x < 0) shouldEqual MyNil
+    Lab.dropWhile2(MyList(1, 2, 3))(x => x > 0) shouldEqual MyNil
   }
 
   "Init" should "be correct" in {
@@ -65,10 +65,22 @@ class LabSpec extends FlatSpec with Matchers {
   }
 
   "Reverse" should "be correct" in {
-
+    Lab.reverse(MyList(1, 2, 3)) shouldEqual MyList(3, 2, 1)
+    Lab.reverse(MyList(1)) shouldEqual MyList(1)
+    Lab.reverse(MyNil) shouldEqual MyNil
   }
 
   "Append" should "be correct" in {
+    Lab.append(MyList(1, 2, 3), MyList(4, 5, 6)) shouldEqual MyList(1, 2, 3, 4, 5, 6)
+    Lab.append(MyNil, MyList(4, 5, 6)) shouldEqual MyList(4, 5, 6)
+    Lab.append(MyList(4, 5, 6), MyNil) shouldEqual MyList(4, 5, 6)
+    Lab.append(MyNil, MyNil) shouldEqual MyNil
 
+
+    Lab.appendAll(MyList(MyList(1, 2, 3), MyList(4, 5, 6))) shouldEqual MyList(1, 2, 3, 4, 5, 6)
+    Lab.appendAll(MyList(MyList(1, 2, 3), MyList(4, 5, 6), MyList(7, 8, 9))) shouldEqual MyList(1, 2, 3, 4, 5, 6, 7, 8, 9)
+    Lab.appendAll(MyList(MyNil, MyList(4, 5, 6), MyList(7, 8, 9))) shouldEqual MyList(4, 5, 6, 7, 8, 9)
+    Lab.appendAll(MyList(MyNil, MyNil)) shouldEqual MyNil
+    Lab.appendAll(MyNil) shouldEqual MyNil
   }
 }
