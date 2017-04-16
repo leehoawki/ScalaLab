@@ -23,9 +23,7 @@ object MyList {
   def apply[A](as: A*): MyList[A] =
     if (as.isEmpty) MyNil
     else MyCons(as.head, apply(as.tail: _*))
-}
 
-object Lab {
   def tail[A](l: MyList[A]): MyList[A] = l match {
     case MyNil => MyNil
     case MyCons(_, t) => t
@@ -39,6 +37,14 @@ object Lab {
     else l match {
       case MyNil => MyNil
       case MyCons(_, t) => drop(t, n - 1)
+    }
+  }
+
+  def take[A](l: MyList[A], n: Int): MyList[A] = {
+    if (n <= 0) MyNil
+    else l match {
+      case MyNil => MyNil
+      case MyCons(x, t) => MyCons(x, take(t, n - 1))
     }
   }
 
@@ -83,9 +89,9 @@ object Lab {
 
   def length2[A](as: MyList[A]): Int = foldLeft2(as, 0)((y, _) => y + 1)
 
-  def sum(as: MyList[Int]): Int = foldLeft2(as, 0)(_ + _)
+  def sum2(as: MyList[Int]): Int = foldLeft2(as, 0)(_ + _)
 
-  def products(as: MyList[Double]): Double = foldLeft2(as, 1.0)(_ * _)
+  def product2(as: MyList[Double]): Double = foldLeft2(as, 1.0)(_ * _)
 
   def reverse[A](as: MyList[A]): MyList[A] = foldLeft2(as, MyNil: MyList[A])((x, y) => MyCons(y, x))
 
@@ -95,13 +101,25 @@ object Lab {
 
   def map[A, B](as: MyList[A])(f: A => B): MyList[B] = foldRight(as, MyNil: MyList[B])((x, y) => MyCons(f(x), y))
 
-  def filter[A](as: MyList[A])(f: A => Boolean): MyList[A] = foldRight(as, MyNil: MyList[A] )((x, y) => if (f(x)) MyCons(x, y) else y)
+  def filter[A](as: MyList[A])(f: A => Boolean): MyList[A] = foldRight(as, MyNil: MyList[A])((x, y) => if (f(x)) MyCons(x, y) else y)
 
-  def flatMap[A, B](as: MyList[A])(f: A => MyList[B]): MyList[B] = MyNil
+  def flatMap[A, B](as: MyList[A])(f: A => MyList[B]): MyList[B] = foldRight(as, MyNil: MyList[B])((x, y) => append(f(x), y))
 
-  def filter2[A](as: MyList[A])(f: A => Boolean): MyList[A] = MyNil
+  def filter2[A](as: MyList[A])(f: A => Boolean): MyList[A] = flatMap(as)(x => if (f(x)) MyList(x) else MyNil)
 
-  def zipWith[A, B](a1: MyList[A], a2: MyList[A])(f: (A, A) => B): MyList[B] = MyNil
+  def zipWith[A, B](a1: MyList[A], a2: MyList[A])(f: (A, A) => B): MyList[B] = (a1, a2) match {
+    case (MyNil, _) => MyNil
+    case (_, MyNil) => MyNil
+    case (MyCons(a1, a1s), MyCons(a2, a2s)) => MyCons(f(a1, a2), zipWith(a1s, a2s)(f))
+  }
 
-  def hasSubsequence[A](sup: MyList[A], sub: MyList[A]): Boolean = false
+  def hasSubsequence[A](sup: MyList[A], sub: MyList[A]): Boolean = {
+    val supLen = length(sup)
+    val subLen = length(sub)
+    val ls = take(sup, subLen)
+    if (supLen >= subLen)
+      (ls == sub) || hasSubsequence(tail(sup), sub)
+    else
+      false
+  }
 }
