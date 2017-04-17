@@ -41,11 +41,10 @@ case object MyNone extends MyOption[Nothing] {
 case object MyOption {
   def lift[A, B](f: A => B): MyOption[A] => MyOption[B] = _ map f
 
-  def map2[A, B, C](a: MyOption[A], b: MyOption[B])(f: (A, B) => C): MyOption[C] = (a, b) match {
-    case (MyNone, _) => MyNone
-    case (_, MyNone) => MyNone
-    case (MySome(x), MySome(y)) => MySome(f(x, y))
-  }
+  def map2[A, B, C](a: MyOption[A], b: MyOption[B])(f: (A, B) => C): MyOption[C] =
+    a flatMap (aa =>
+      b map (bb =>
+        f(aa, bb)))
 
   def sequence[A](a: MyList[MyOption[A]]): MyOption[MyList[A]] = {
     def f[A](a: A, b: MyList[A]): MyList[A] = MyCons(a, b)
@@ -53,5 +52,11 @@ case object MyOption {
     def g[A](a: MyOption[A], b: MyOption[MyList[A]]): MyOption[MyList[A]] = map2(a, b)(f)
 
     MyList.foldRight(a, MySome(MyNil): MyOption[MyList[A]])(g)
+  }
+
+  def traverse[A, B](a: MyList[A])(f: A => MyOption[B]): MyOption[MyList[B]] = {
+    def g[A](a: A, b: MyOption[MyList[B]]): MyOption[MyList[B]] = map2(f(a), b)((x, y) => MyCons(x, y))
+
+    MyList.foldRight(a, MySome(MyNil): MyOption[MyList[B]])(g)
   }
 }
