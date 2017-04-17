@@ -1,5 +1,7 @@
 package ch04
 
+import ch03.{MyCons, MyList, MyNil}
+
 sealed trait MyOption[+A] {
   def map[B](f: A => B): MyOption[B]
 
@@ -36,3 +38,20 @@ case object MyNone extends MyOption[Nothing] {
   override def filter(f: (Nothing) => Boolean): MyOption[Nothing] = MyNone
 }
 
+case object MyOption {
+  def lift[A, B](f: A => B): MyOption[A] => MyOption[B] = _ map f
+
+  def map2[A, B, C](a: MyOption[A], b: MyOption[B])(f: (A, B) => C): MyOption[C] = (a, b) match {
+    case (MyNone, _) => MyNone
+    case (_, MyNone) => MyNone
+    case (MySome(x), MySome(y)) => MySome(f(x, y))
+  }
+
+  def sequence[A](a: MyList[MyOption[A]]): MyOption[MyList[A]] = {
+    def f[A](a: A, b: MyList[A]): MyList[A] = MyCons(a, b)
+
+    def g[A](a: MyOption[A], b: MyOption[MyList[A]]): MyOption[MyList[A]] = map2(a, b)(f)
+
+    MyList.foldRight(a, MySome(MyNil): MyOption[MyList[A]])(g)
+  }
+}
