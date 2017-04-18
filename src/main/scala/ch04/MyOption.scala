@@ -47,15 +47,15 @@ case object MyOption {
         f(aa, bb)))
 
   def sequence[A](a: MyList[MyOption[A]]): MyOption[MyList[A]] = {
-    def f[A](a: A, b: MyList[A]): MyList[A] = MyCons(a, b)
+    def f(a: A, b: MyList[A]): MyList[A] = MyCons(a, b)
 
-    def g[A](a: MyOption[A], b: MyOption[MyList[A]]): MyOption[MyList[A]] = map2(a, b)(f)
+    def g(a: MyOption[A], b: MyOption[MyList[A]]): MyOption[MyList[A]] = map2(a, b)(f)
 
     MyList.foldRight(a, MySome(MyNil): MyOption[MyList[A]])(g)
   }
 
   def traverse[A, B](a: MyList[A])(f: A => MyOption[B]): MyOption[MyList[B]] = {
-    def g[A](a: A, b: MyOption[MyList[B]]): MyOption[MyList[B]] = map2(f(a), b)((x, y) => MyCons(x, y))
+    def g(a: A, b: MyOption[MyList[B]]): MyOption[MyList[B]] = map2(f(a), b)((x, y) => MyCons(x, y))
 
     MyList.foldRight(a, MySome(MyNil): MyOption[MyList[B]])(g)
   }

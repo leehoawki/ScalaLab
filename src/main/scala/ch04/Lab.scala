@@ -10,5 +10,4 @@ object Lab {
   }
 
   def variance(xs: MyList[Double]) = avg(xs).flatMap(m => MyList.foldLeft(xs, MySome(0.0): MyOption[Double])((x, y) => x.flatMap(z => MySome(z + Math.pow(y - m, 2)))))
-
 }
