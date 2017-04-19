@@ -1,7 +1,6 @@
 package ch04
 
 import ch03.{MyCons, MyList, MyNil}
-import ch04.MyOption.map2
 
 sealed trait MyEither[+E, +A] {
   def map[B](f: A => B): MyEither[E, B]
