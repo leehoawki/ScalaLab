@@ -1,6 +1,6 @@
 package ch05
 
-import ch03.{MyList, MyNil}
+import ch03.{MyCons, MyList, MyNil}
 import ch04.{MyNone, MySome}
 import org.scalatest.{FlatSpec, Matchers}
 
@@ -58,9 +58,9 @@ class MyStreamSpec extends FlatSpec with Matchers {
   }
 
   "Append" should "be correct" in {
-    MyEmpty.append(MyEmpty) shouldEqual MyEmpty
-    MyEmpty.append(MyStream(1, 2, 3)) shouldEqual MyStream(1, 2, 3)
-    MyStream(1, 2, 3).append(MyEmpty) shouldEqual MyStream(1, 2, 3)
-    MyStream(1, 2, 3).append(MyStream(1, 2, 3)) shouldEqual MyStream(1, 2, 3, 1, 2, 3)
+    MyEmpty.append(MyEmpty).toList shouldEqual MyNil
+    MyEmpty.append(MyStream(1, 2, 3)).toList shouldEqual MyList(1, 2, 3)
+    MyStream(1, 2, 3).append(MyEmpty).toList shouldEqual MyList(1, 2, 3)
+    MyStream(1, 2, 3).append(MyStream(1, 2, 3)).toList shouldEqual MyList(1, 2, 3, 1, 2, 3)
   }
 }

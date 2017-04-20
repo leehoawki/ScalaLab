@@ -1,6 +1,8 @@
 package ch05
 
+import ch03.MyList.foldRight
 import ch03.{MyCons, MyList, MyNil}
+import ch04.{MyNone, MyOption, MySome}
 
 sealed trait MyStream[+A] {
 
@@ -23,7 +25,7 @@ sealed trait MyStream[+A] {
 
   def takeWhile2(p: A => Boolean) = foldRight(MyEmpty: MyStream[A])((a, b) => if (p(a)) MyStream.scons(a, b) else MyEmpty)
 
-  def headOption: Option[A] = ???
+  def headOption: MyOption[A] = foldRight(MyNone: MyOption[A])((a, b) => MySome(a))
 
   def map[B](f: A => B): MyStream[B] = foldRight(MyEmpty: MyStream[B])((a, b) => MyStream.scons(f(a), b))
 
@@ -31,7 +33,7 @@ sealed trait MyStream[+A] {
 
   def flatMap[B](f: A => MyStream[B]): MyStream[B] = foldRight(MyEmpty: MyStream[B])((a, b) => f(a).append(b))
 
-  def append[B >: A](b: => MyStream[B]): MyStream[B] = ???
+  def append[B >: A](b: => MyStream[B]): MyStream[B] = foldRight(b)((x, y) => MyStream.scons(x, y))
 }
 
 case object MyEmpty extends MyStream[Nothing] {
