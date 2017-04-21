@@ -74,5 +74,14 @@ object MyStream {
     go(0, 1)
   }
 
-  def unfold[A, S](z: S)(f: S => MyOption[(A, S)]): MyStream[A] = ???
+  def unfold[A, S](z: S)(f: S => MyOption[(A, S)]): MyStream[A] = f(z) match {
+    case MyNone => empty
+    case MySome((a, s)) => scons(a, unfold(s)(f))
+  }
+
+  def constant2: MyStream[Int] = unfold(0) { case a => MySome(a, a) }
+
+  def from2: MyStream[Int] = unfold(0) { case a => MySome(a, a + 1) }
+
+  def fibs2: MyStream[Int] = unfold((0, 1)) { case (a1, a2) => MySome((a1, (a2, a1 + a2))) }
 }
