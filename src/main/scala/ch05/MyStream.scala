@@ -61,4 +61,18 @@ object MyStream {
   def empty[A]: MyStream[A] = MyEmpty
 
   def apply[A](as: A*): MyStream[A] = if (as.isEmpty) empty else scons(as.head, apply(as.tail: _*))
+
+  def constant[A](a: A): MyStream[A] = scons(a, constant(a))
+
+  def from(n: Int): MyStream[Int] = scons(n, from(n + 1))
+
+  def fibs: MyStream[Int] = {
+    def go(prev: Int, cur: Int): MyStream[Int] = {
+      scons(prev, go(cur, prev + cur))
+    }
+
+    go(0, 1)
+  }
+
+  def unfold[A, S](z: S)(f: S => MyOption[(A, S)]): MyStream[A] = ???
 }
