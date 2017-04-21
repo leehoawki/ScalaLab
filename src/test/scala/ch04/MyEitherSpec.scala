@@ -1,6 +1,5 @@
 package ch04
 
-import ch03.{MyList, MyNil}
 import org.scalatest._
 
 class MyEitherSpec extends FlatSpec with Matchers {

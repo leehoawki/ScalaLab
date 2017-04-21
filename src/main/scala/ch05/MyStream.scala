@@ -1,6 +1,5 @@
 package ch05
 
-import ch03.MyList.foldRight
 import ch03.{MyCons, MyList, MyNil}
 import ch04.{MyNone, MyOption, MySome}
 
