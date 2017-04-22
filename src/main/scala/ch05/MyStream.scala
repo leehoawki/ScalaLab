@@ -2,6 +2,7 @@ package ch05
 
 import ch03.{MyCons, MyList, MyNil}
 import ch04.{MyNone, MyOption, MySome}
+import ch05.MyStream.unfold
 
 sealed trait MyStream[+A] {
 
@@ -33,6 +34,16 @@ sealed trait MyStream[+A] {
   def flatMap[B](f: A => MyStream[B]): MyStream[B] = foldRight(MyEmpty: MyStream[B])((a, b) => f(a).append(b))
 
   def append[B >: A](b: => MyStream[B]): MyStream[B] = foldRight(b)((x, y) => MyStream.scons(x, y))
+
+  def map2[A, B](f: A => B): MyStream[B] = ???
+
+  def take2[A, B](f: A => B): MyStream[B] = ???
+
+  def takeWhile3[A, B](f: A => B): MyStream[B] = ???
+
+  def zipWith[A, B](f: A => B): MyStream[B] = ???
+
+  def zipAll[A, B](f: A => B): MyStream[B] = ???
 }
 
 case object MyEmpty extends MyStream[Nothing] {
