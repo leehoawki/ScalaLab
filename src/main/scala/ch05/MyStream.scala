@@ -35,15 +35,15 @@ sealed trait MyStream[+A] {
 
   def append[B >: A](b: => MyStream[B]): MyStream[B] = foldRight(b)((x, y) => MyStream.scons(x, y))
 
-  def map2[A, B](f: A => B): MyStream[B] = ???
+  def map2[B](f: A => B): MyStream[B] = ???
 
-  def take2[A, B](f: A => B): MyStream[B] = ???
+  def take2(n: Int): MyStream[A] = ???
 
-  def takeWhile3[A, B](f: A => B): MyStream[B] = ???
+  def takeWhile3(p: A => Boolean) = ???
 
-  def zipWith[A, B](f: A => B): MyStream[B] = ???
+  def zipWith[B](s2: MyStream[B])(f: (A, A) => B): MyStream[B] = ???
 
-  def zipAll[A, B](f: A => B): MyStream[B] = ???
+  def zipAll[B](s2: MyStream[B]): MyStream[(MyOption[A], MyOption[B])] = ???
 }
 
 case object MyEmpty extends MyStream[Nothing] {
