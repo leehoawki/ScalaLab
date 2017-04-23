@@ -51,10 +51,10 @@ sealed trait MyStream[+A] {
     case MyScons(h, t) => if (p(h())) MySome((h()), t()) else MyNone
   }
 
-  def zipWith[B](s2: MyStream[B])(f: (A, A) => B): MyStream[B] = unfold((this, s2)) {
+  def zipWith[B >: A, C](s2: MyStream[B])(f: (A, B) => C): MyStream[C] = unfold((this, s2)) {
     case (MyEmpty, _) => MyNone
     case (_, MyEmpty) => MyNone
-    case (MyScons(h1, t1), MyScons(h2, t2)) => MySome(f(h1(), h2()), (t1(), t2()))
+    case (MyScons(h1, t1), MyScons(h2, t2)) => MySome((f(h1(), h2()), (t1(), t2())))
   }
 
   def zipAll[B](s2: MyStream[B]): MyStream[(MyOption[A], MyOption[B])] = unfold((this, s2)) {
@@ -64,13 +64,25 @@ sealed trait MyStream[+A] {
     case (MyScons(h1, t1), MyScons(h2, t2)) => MySome((MySome(h1()), MySome(h2())), (t1(), t2()))
   }
 
-  def startsWith[B >: A](s: MyStream[B]): Boolean = ???
+  def startsWith[B >: A](s: MyStream[B]): Boolean = zipAll(s).foldRight(true)((a, b) => {
+    a match {
+      case (MySome(_), MyNone) => true
+      case (MySome(x1), MySome(x2)) => (x1 == x2) && b
+      case _ => false
+    }
+  })
 
-  def tails: MyStream[MyStream[A]] = ???
+  def tails: MyStream[MyStream[A]] = unfold(this) {
+    case MyEmpty => MyNone
+    case a@MyScons(h, t) => MySome(a, t())
+  }
 
   def hasSubsequence[B >: A](s: MyStream[B]): Boolean = tails exists (_ startsWith s)
 
-  def scanRight[B](z: B)(f: (A, B) => B): MyStream[B] = ???
+  def scanRight[B](z: B)(f: (A, => B) => B): MyStream[B] = unfold(this) {
+    case MyEmpty => MyNone
+    case a@MyScons(h, t) => MySome((a.foldRight(z)(f), t()))
+  }
 }
 
 case object MyEmpty extends MyStream[Nothing] {
@@ -123,4 +135,3 @@ object MyStream {
 
   def fibs2: MyStream[Int] = unfold((0, 1)) { case (a1, a2) => MySome((a1, (a2, a1 + a2))) }
 }
-
