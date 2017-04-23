@@ -35,15 +35,42 @@ sealed trait MyStream[+A] {
 
   def append[B >: A](b: => MyStream[B]): MyStream[B] = foldRight(b)((x, y) => MyStream.scons(x, y))
 
-  def map2[B](f: A => B): MyStream[B] = ???
+  def map2[B](f: A => B): MyStream[B] = unfold(this) {
+    case MyScons(h, t) => MySome(f(h()), t())
+    case MyEmpty => MyNone
+  }
 
-  def take2(n: Int): MyStream[A] = ???
+  def take2(n: Int): MyStream[A] = unfold((this, n)) {
+    case (MyEmpty, _) => MyNone
+    case (_, n) if n <= 0 => MyNone
+    case (MyScons(h, t), n) if n > 0 => MySome((h()), (t(), n - 1))
+  }
 
-  def takeWhile3(p: A => Boolean) = ???
+  def takeWhile3(p: A => Boolean) = unfold(this) {
+    case MyEmpty => MyNone
+    case MyScons(h, t) => if (p(h())) MySome((h()), t()) else MyNone
+  }
 
-  def zipWith[B](s2: MyStream[B])(f: (A, A) => B): MyStream[B] = ???
+  def zipWith[B](s2: MyStream[B])(f: (A, A) => B): MyStream[B] = unfold((this, s2)) {
+    case (MyEmpty, _) => MyNone
+    case (_, MyEmpty) => MyNone
+    case (MyScons(h1, t1), MyScons(h2, t2)) => MySome(f(h1(), h2()), (t1(), t2()))
+  }
 
-  def zipAll[B](s2: MyStream[B]): MyStream[(MyOption[A], MyOption[B])] = ???
+  def zipAll[B](s2: MyStream[B]): MyStream[(MyOption[A], MyOption[B])] = unfold((this, s2)) {
+    case (MyEmpty, MyEmpty) => MyNone
+    case (MyScons(h1, t1), MyEmpty) => MySome((MySome(h1()), MyNone), (t1(), MyEmpty))
+    case (MyEmpty, MyScons(h2, t2)) => MySome((MyNone, MySome(h2())), (MyEmpty, t2()))
+    case (MyScons(h1, t1), MyScons(h2, t2)) => MySome((MySome(h1()), MySome(h2())), (t1(), t2()))
+  }
+
+  def startsWith[B >: A](s: MyStream[B]): Boolean = ???
+
+  def tails: MyStream[MyStream[A]] = ???
+
+  def hasSubsequence[B >: A](s: MyStream[B]): Boolean = tails exists (_ startsWith s)
+
+  def scanRight[B](z: B)(f: (A, B) => B): MyStream[B] = ???
 }
 
 case object MyEmpty extends MyStream[Nothing] {
@@ -90,9 +117,10 @@ object MyStream {
     case MySome((a, s)) => scons(a, unfold(s)(f))
   }
 
-  def constant2: MyStream[Int] = unfold(0) { case a => MySome(a, a) }
+  def constant2[A](a: A): MyStream[A] = unfold(a) { case x => MySome(x, x) }
 
-  def from2: MyStream[Int] = unfold(0) { case a => MySome(a, a + 1) }
+  def from2(n: Int): MyStream[Int] = unfold(n) { case a => MySome(a, a + 1) }
 
   def fibs2: MyStream[Int] = unfold((0, 1)) { case (a1, a2) => MySome((a1, (a2, a1 + a2))) }
 }
+

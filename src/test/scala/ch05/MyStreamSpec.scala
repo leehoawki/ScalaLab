@@ -50,6 +50,15 @@ class MyStreamSpec extends FlatSpec with Matchers {
 
     MyStream().takeWhile2(_ => true).toList shouldEqual MyNil
     MyStream().takeWhile2(_ => false).toList shouldEqual MyNil
+
+    MyStream(1, 2, 3, 2, 1).takeWhile3(_ < 0).toList shouldEqual MyNil
+    MyStream(1, 2, 3, 2, 1).takeWhile3(_ > 0).toList shouldEqual MyList(1, 2, 3, 2, 1)
+    MyStream(1, 2, 3, 2, 1).takeWhile3(_ > 2).toList shouldEqual MyNil
+    MyStream(1, 2, 3, 2, 1).takeWhile3(_ < 2).toList shouldEqual MyList(1)
+    MyStream(1, 2, 3, 2, 1).takeWhile3(_ < 3).toList shouldEqual MyList(1, 2)
+
+    MyStream().takeWhile3(_ => true).toList shouldEqual MyNil
+    MyStream().takeWhile3(_ => false).toList shouldEqual MyNil
   }
 
   "HeadOption" should "be correct" in {
