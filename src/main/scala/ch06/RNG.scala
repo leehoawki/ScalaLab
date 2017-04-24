@@ -93,4 +93,27 @@ object RNG {
   }
 
   def ints2(count: Int): Rand[MyList[Int]] = sequence(MyStream.constant(int).take(count).toList)
+
+  def flatMap[A, B](f: Rand[A])(g: A => Rand[B]): Rand[B] = {
+    rng => {
+      val (x, rng2) = f(rng)
+      g(x)(rng2)
+    }
+  }
+
+  def nongNegtiveLessThan(n: Int): Rand[Int] = {
+    flatMap(int) {
+      a => {
+        val m = a % n
+        if (a + (n - 1) - m >= 0) unit(m)
+        else nongNegtiveLessThan(n)
+      }
+    }
+  }
+
+  def mapByFlatMap[A, B](s: Rand[A])(f: A => B): Rand[B] = flatMap(s) { a => unit(f(a)) }
+
+  def map2ByFlatMap[A, B, C](ra: Rand[A], rb: Rand[B])(f: (A, B) => C): Rand[C] = flatMap(ra) { a => mapByFlatMap(rb) { b => f(a, b) } }
+
+  def map3ByFlatMap[A, B, C, D](ra: Rand[A], rb: Rand[B], rc: Rand[C])(f: (A, B, C) => D): Rand[D] = flatMap(ra) { a => flatMap(rb) { b => mapByFlatMap(rc) { c => f(a, b, c) } } }
 }
