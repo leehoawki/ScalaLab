@@ -1,6 +1,9 @@
 package ch06
 
-import ch03.MyList
+import ch03.{MyCons, MyList, MyNil}
+import ch05.MyStream
+
+import scala.annotation.tailrec
 
 trait RNG {
   def nextInt: (Int, RNG)
@@ -46,5 +49,48 @@ object RNG {
     ((d1, d2, d3), rng3)
   }
 
-  def ints(count: Int)(rng: RNG): (MyList[Int], RNG) = ???
+  def ints(count: Int)(rng: RNG): (MyList[Int], RNG) = {
+    @tailrec
+    def go(n: Int, rng: RNG, acc: MyList[Int]): (MyList[Int], RNG) = {
+      if (n <= 0) (acc, rng)
+      else {
+        val (i, rng2) = rng.nextInt
+        go(n - 1, rng2, MyCons(i, acc))
+      }
+    }
+
+    go(count, rng, MyNil)
+  }
+
+  type Rand[+A] = RNG => (A, RNG)
+
+  def unit[A](a: A): Rand[A] = rng => (a, rng)
+
+  def map[A, B](s: Rand[A])(f: A => B): Rand[B] = rng => {
+    val (a, rng2) = s(rng)
+    (f(a), rng2)
+  }
+
+  def int: Rand[Int] = rng => rng.nextInt
+
+  def double: Rand[Double] = map(nextPositiveInt)(i => if (i == Int.MaxValue) 0 else i.toDouble / Int.MaxValue.toDouble)
+
+  def map2[A, B, C](ra: Rand[A], rb: Rand[B])(f: (A, B) => C): Rand[C] = rng => {
+    val (a, rng2) = ra(rng)
+    val (b, rng3) = rb(rng2)
+    (f(a, b), rng3)
+  }
+
+  def both[A, B](ra: Rand[A], rb: Rand[B]): Rand[(A, B)] = map2(ra, rb)((_, _))
+
+  def randIntDouble: Rand[(Int, Double)] = both(int, double)
+
+  def sequence[A](fs: MyList[Rand[A]]): Rand[MyList[A]] = rng => {
+    MyList.foldRight(fs, (MyNil: MyList[A], rng))((a, b) => {
+      val (x, rngn) = a(b._2)
+      (MyCons(x, b._1), rngn)
+    })
+  }
+
+  def ints2(count: Int): Rand[MyList[Int]] = sequence(MyStream.constant(int).take(count).toList)
 }
