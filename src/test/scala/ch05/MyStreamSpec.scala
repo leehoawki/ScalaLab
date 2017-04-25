@@ -1,6 +1,6 @@
 package ch05
 
-import ch03.{MyCons, MyList, MyNil}
+import ch03.{MyList, MyNil}
 import ch04.{MyNone, MySome}
 import org.scalatest.{FlatSpec, Matchers}
 
