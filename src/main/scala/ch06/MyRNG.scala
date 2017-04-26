@@ -5,53 +5,53 @@ import ch05.MyStream
 
 import scala.annotation.tailrec
 
-trait RNG {
-  def nextInt: (Int, RNG)
+trait MyRNG {
+  def nextInt: (Int, MyRNG)
 }
 
-case class SimpleRNG(seed: Long) extends RNG {
-  override def nextInt: (Int, RNG) = {
+case class SimpleRNG(seed: Long) extends MyRNG {
+  override def nextInt: (Int, MyRNG) = {
     val newSeed = (seed * 0x5DEECE66DL + 0xBL) & 0xFFFFFFFFFFFFL
     val nextRNG = SimpleRNG(newSeed)
     ((newSeed >>> 16).toInt, nextRNG)
   }
 }
 
-object RNG {
-  def nextDouble(rng: RNG): (Double, RNG) = {
+object MyRNG {
+  def nextDouble(rng: MyRNG): (Double, MyRNG) = {
     val (i, rng2) = nextPositiveInt(rng)
     if (i == Int.MaxValue) (0.0, rng2)
     else (i.toDouble / Int.MaxValue.toDouble, rng2)
   }
 
-  def nextPositiveInt(rng: RNG): (Int, RNG) = {
+  def nextPositiveInt(rng: MyRNG): (Int, MyRNG) = {
     val (i, rng2) = rng.nextInt
     if (i == Int.MinValue) (Int.MaxValue, rng2)
     else (i.abs, rng2)
   }
 
-  def intDouble(rng: RNG): ((Int, Double), RNG) = {
+  def intDouble(rng: MyRNG): ((Int, Double), MyRNG) = {
     val (i, rng1) = nextPositiveInt(rng)
     val (d, rng2) = nextDouble(rng1)
     ((i, d), rng2)
   }
 
-  def doubleInt(rng: RNG): ((Double, Int), RNG) = {
+  def doubleInt(rng: MyRNG): ((Double, Int), MyRNG) = {
     val (d, rng1) = nextDouble(rng)
     val (i, rng2) = nextPositiveInt(rng1)
     ((d, i), rng2)
   }
 
-  def double3(rng: RNG): ((Double, Double, Double), RNG) = {
+  def double3(rng: MyRNG): ((Double, Double, Double), MyRNG) = {
     val (d1, rng1) = nextDouble(rng)
     val (d2, rng2) = nextDouble(rng1)
     val (d3, rng3) = nextDouble(rng2)
     ((d1, d2, d3), rng3)
   }
 
-  def ints(count: Int)(rng: RNG): (MyList[Int], RNG) = {
+  def ints(count: Int)(rng: MyRNG): (MyList[Int], MyRNG) = {
     @tailrec
-    def go(n: Int, rng: RNG, acc: MyList[Int]): (MyList[Int], RNG) = {
+    def go(n: Int, rng: MyRNG, acc: MyList[Int]): (MyList[Int], MyRNG) = {
       if (n <= 0) (acc, rng)
       else {
         val (i, rng2) = rng.nextInt
@@ -62,7 +62,7 @@ object RNG {
     go(count, rng, MyNil)
   }
 
-  type Rand[+A] = RNG => (A, RNG)
+  type Rand[+A] = MyRNG => (A, MyRNG)
 
   def unit[A](a: A): Rand[A] = rng => (a, rng)
 

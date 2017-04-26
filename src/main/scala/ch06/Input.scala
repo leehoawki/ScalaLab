@@ -11,5 +11,5 @@ case object Turn extends Input
 case class Machine(locked: Boolean, candies: Int, coins: Int)
 
 object Input {
-  def simulateMachine(inputs: MyList[Input]): State[Machine, (Int, Int)] = ???
+  def simulateMachine(inputs: MyList[Input]): MyState[Machine, (Int, Int)] = ???
 }

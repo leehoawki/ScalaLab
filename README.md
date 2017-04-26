@@ -11,6 +11,6 @@ Exercises in Functional Programming in Scala.
 
 [MyStream](/src/main/scala/ch05/MyStream.scala)
 
-[RNG](/src/main/scala/ch06/RNG.scala)
+[MyRNG](/src/main/scala/ch06/MyRNG.scala)
 
-[State](/src/main/scala/ch06/State.scala)
+[MyState](/src/main/scala/ch06/MyState.scala)
