@@ -89,9 +89,8 @@ class MyListSpec extends FlatSpec with Matchers {
   }
 
   "Filter" should "be correct" in {
-    MyList.filter(MyList(1, 2, 3))(_ > 0) shouldEqual MyList(1, 2, 3)
-    MyList.filter(MyList(1, 2, 3))(_ < 0) shouldEqual MyNil
-    MyList.filter(MyNil: MyList[Int])(_ < 0) shouldEqual MyNil
+    MyList(1, 2, 3).filter(_ > 0) shouldEqual MyList(1, 2, 3)
+    MyList(1, 2, 3).filter(_ < 0) shouldEqual MyNil
 
     MyList.filter2(MyList(1, 2, 3))(_ > 0) shouldEqual MyList(1, 2, 3)
     MyList.filter2(MyList(1, 2, 3))(_ < 0) shouldEqual MyNil

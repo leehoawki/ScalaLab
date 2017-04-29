@@ -96,6 +96,6 @@ class MyStreamSpec extends FlatSpec with Matchers {
   }
 
   "ScanRight" should "be correct" in {
-    println(MyStream.from(1).take(100).scanRight(0)(_ + _).toList)
+    MyStream.from(1).take(10).scanRight(0)(_ + _).toList shouldEqual MyList(55, 54, 52, 49, 45, 40, 34, 27, 19, 10)
   }
 }

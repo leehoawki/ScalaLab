@@ -25,7 +25,7 @@ class MyStackSpec extends FlatSpec with Matchers {
         b <- pop
         c <- pop
         d <- pop
-      } yield MyList.sum(MyList.map(MyList(a, b, c, d))(_.getOrElse(0)))
+      } yield MyList.sum(MyList(a, b, c, d).map(_.getOrElse(0)))
     }
 
     stackRun.run(MyList(1, 2, 3))._1 shouldEqual 6

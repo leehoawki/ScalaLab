@@ -1,8 +1,14 @@
 package ch03
 
+import ch03.MyList.foldRight
+
 import scala.annotation.tailrec
 
-sealed trait MyList[+A]
+sealed trait MyList[+A] {
+  def map[B](f: A => B): MyList[B] = foldRight(this, MyNil: MyList[B])((x, y) => MyCons(f(x), y))
+
+  def filter(f: A => Boolean): MyList[A] = foldRight(this, MyNil: MyList[A])((x, y) => if (f(x)) MyCons(x, y) else y)
+}
 
 case object MyNil extends MyList[Nothing]
 
@@ -98,10 +104,6 @@ object MyList {
   def append[A](a1: MyList[A], a2: MyList[A]): MyList[A] = foldRight(a1, a2)((x, y) => MyCons(x, y))
 
   def appendAll[A](as: MyList[MyList[A]]): MyList[A] = foldRight(as, MyNil: MyList[A])(append)
-
-  def map[A, B](as: MyList[A])(f: A => B): MyList[B] = foldRight(as, MyNil: MyList[B])((x, y) => MyCons(f(x), y))
-
-  def filter[A](as: MyList[A])(f: A => Boolean): MyList[A] = foldRight(as, MyNil: MyList[A])((x, y) => if (f(x)) MyCons(x, y) else y)
 
   def flatMap[A, B](as: MyList[A])(f: A => MyList[B]): MyList[B] = foldRight(as, MyNil: MyList[B])((x, y) => append(f(x), y))
 
