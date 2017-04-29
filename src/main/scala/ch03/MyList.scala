@@ -8,6 +8,8 @@ sealed trait MyList[+A] {
   def map[B](f: A => B): MyList[B] = foldRight(this, MyNil: MyList[B])((x, y) => MyCons(f(x), y))
 
   def filter(f: A => Boolean): MyList[A] = foldRight(this, MyNil: MyList[A])((x, y) => if (f(x)) MyCons(x, y) else y)
+
+  def append[B >: A](a: MyList[B]): MyList[B] = foldRight(this, a)((x, y) => MyCons(x, y))
 }
 
 case object MyNil extends MyList[Nothing]
@@ -18,6 +20,15 @@ object MyList {
   def sum(ints: MyList[Int]): Int = ints match {
     case MyNil => 0
     case MyCons(x, xs) => x + sum(xs)
+  }
+
+  def sort(ints: MyList[Int]): MyList[Int] = {
+    def qs(list: MyList[Int]): MyList[Int] = list match {
+      case MyNil => MyNil
+      case MyCons(x, xs) => qs(xs.filter(_ < x)).append(MyList(x)).append(xs.filter(_ >= x))
+    }
+
+    qs(ints)
   }
 
   def product(ints: MyList[Double]): Double = ints match {
@@ -101,11 +112,9 @@ object MyList {
 
   def reverse[A](as: MyList[A]): MyList[A] = foldLeft2(as, MyNil: MyList[A])((x, y) => MyCons(y, x))
 
-  def append[A](a1: MyList[A], a2: MyList[A]): MyList[A] = foldRight(a1, a2)((x, y) => MyCons(x, y))
+  def appendAll[A](as: MyList[MyList[A]]): MyList[A] = foldRight(as, MyNil: MyList[A])((x, y) => x.append(y))
 
-  def appendAll[A](as: MyList[MyList[A]]): MyList[A] = foldRight(as, MyNil: MyList[A])(append)
-
-  def flatMap[A, B](as: MyList[A])(f: A => MyList[B]): MyList[B] = foldRight(as, MyNil: MyList[B])((x, y) => append(f(x), y))
+  def flatMap[A, B](as: MyList[A])(f: A => MyList[B]): MyList[B] = foldRight(as, MyNil: MyList[B])((x, y) => f(x).append(y))
 
   def filter2[A](as: MyList[A])(f: A => Boolean): MyList[A] = flatMap(as)(x => if (f(x)) MyList(x) else MyNil)
 

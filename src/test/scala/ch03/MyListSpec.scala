@@ -71,10 +71,10 @@ class MyListSpec extends FlatSpec with Matchers {
   }
 
   "Append" should "be correct" in {
-    MyList.append(MyList(1, 2, 3), MyList(4, 5, 6)) shouldEqual MyList(1, 2, 3, 4, 5, 6)
-    MyList.append(MyNil, MyList(4, 5, 6)) shouldEqual MyList(4, 5, 6)
-    MyList.append(MyList(4, 5, 6), MyNil) shouldEqual MyList(4, 5, 6)
-    MyList.append(MyNil, MyNil) shouldEqual MyNil
+    MyList(1, 2, 3).append(MyList(4, 5, 6)) shouldEqual MyList(1, 2, 3, 4, 5, 6)
+    MyNil.append(MyList(4, 5, 6)) shouldEqual MyList(4, 5, 6)
+    MyList(4, 5, 6).append(MyNil) shouldEqual MyList(4, 5, 6)
+    MyNil.append(MyNil) shouldEqual MyNil
 
     MyList.appendAll(MyList(MyList(1, 2, 3), MyList(4, 5, 6))) shouldEqual MyList(1, 2, 3, 4, 5, 6)
     MyList.appendAll(MyList(MyList(1, 2, 3), MyList(4, 5, 6), MyList(7, 8, 9))) shouldEqual MyList(1, 2, 3, 4, 5, 6, 7, 8, 9)
