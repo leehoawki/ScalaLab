@@ -14,3 +14,5 @@ Exercises in Functional Programming in Scala.
 [MyRNG](/src/main/scala/ch06/MyRNG.scala)
 
 [MyState](/src/main/scala/ch06/MyState.scala)
+
+[MyStack](/src/main/scala/ch06/MyStack.scala)
