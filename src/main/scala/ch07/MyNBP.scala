@@ -18,17 +18,9 @@ object MyNBP {
     ref.get
   }
 
-  def unit[A](a: A): MyNBP[A] =
-    es => new MyFuture[A] {
-      def apply(cb: A => Unit): Unit =
-        cb(a)
-    }
+  def unit[A](a: A): MyNBP[A] = es => (cb: A => Unit) => cb(a)
 
-  def fork[A](a: => MyNBP[A]): MyNBP[A] =
-    es => new MyFuture[A] {
-      def apply(cb: A => Unit): Unit =
-        eval(es)(a(es)(cb))
-    }
+  def fork[A](a: => MyNBP[A]): MyNBP[A] = es => (cb: A => Unit) => eval(es)(a(es)(cb))
 
   def eval(es: ExecutorService)(r: => Unit): Unit =
     es.submit(new Callable[Unit] {
