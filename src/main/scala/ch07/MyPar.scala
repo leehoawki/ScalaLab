@@ -13,7 +13,7 @@ object MyPar {
     def call = a(es).get
   })
 
-  def unit[A](a: => A): MyPar[A] = (es: ExecutorService) => UnitFuture(a)
+  def unit[A](a: A): MyPar[A] = (es: ExecutorService) => UnitFuture(a)
 
   def lazyUnit[A](a: => A): MyPar[A] = fork(unit(a))
 
@@ -29,12 +29,15 @@ object MyPar {
 
   def sequence[A](as: MyList[MyPar[A]]): MyPar[MyList[A]] = as match {
     case MyNil => unit(MyNil)
-    case MyCons(h, t) => map2(h, fork(sequence(t)))(MyCons.apply)
+    case MyCons(h, t) => map2(h, sequence(t))(MyCons.apply)
   }
 
-  def parMap[A, B](as: MyList[A])(f: A => B): MyPar[MyList[B]] = fork(sequence(as.map(asyncF(f))))
+  def parMap[A, B](as: MyList[A])(f: A => B): MyPar[MyList[B]] = sequence(as.map(asyncF(f)))
 
-  def parFilter[A](as: MyList[A])(f: A => Boolean): MyPar[MyList[A]] = ???
+  def parFilter[A](as: MyList[A])(f: A => Boolean): MyPar[MyList[A]] = {
+    val pars: MyList[MyPar[MyList[A]]] = as map (asyncF((a: A) => if (f(a)) MyList(a) else MyNil))
+    map(sequence(pars))(MyList.appendAll)
+  }
 }
 
 case class UnitFuture[A](get: A) extends Future[A] {

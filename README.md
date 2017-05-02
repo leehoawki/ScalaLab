@@ -16,3 +16,5 @@ Exercises in Functional Programming in Scala.
 [MyState](/src/main/scala/ch06/MyState.scala)
 
 [MyStack](/src/main/scala/ch06/MyStack.scala)
+
+[MyPar](/src/main/scala/ch07/MyPar.scala)
