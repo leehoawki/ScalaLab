@@ -38,6 +38,8 @@ object MyPar {
     val pars: MyList[MyPar[MyList[A]]] = as map (asyncF((a: A) => if (f(a)) MyList(a) else MyNil))
     map(sequence(pars))(MyList.appendAll)
   }
+
+  def choice[A](cond: MyPar[Boolean])(t: MyPar[A], f: MyPar[A]): MyPar[A] = es => if (run(es)(cond).get) t(es) else f(es)
 }
 
 case class UnitFuture[A](get: A) extends Future[A] {

@@ -2,6 +2,9 @@ package ch07
 
 import java.util.concurrent.{Callable, CountDownLatch, ExecutorService}
 
+import ch04._
+import ch07.fpinscala.parallelism.Actor
+
 trait MyFuture[+A] {
   private[parallelism] def apply(k: A => Unit): Unit
 }
@@ -27,5 +30,23 @@ object MyNBP {
       def call = r
     })
 
-  def map2[A, B, C](p: MyNBP[A], p2: MyNBP[B])(f: (A, B) => C): MyNBP[C] = ???
+  def map2[A, B, C](p: MyNBP[A], p2: MyNBP[B])(f: (A, B) => C): MyNBP[C] =
+    es => (cb: C => Unit) => {
+      var ar: MyOption[A] = MyNone
+      var br: MyOption[B] = MyNone
+      val combiner = Actor[MyEither[A, B]](es) {
+        case MyLeft(a) => br match {
+          case MyNone => ar = MySome(a)
+          case MySome(b) => eval(es)(cb(f(a, b)))
+        }
+        case MyRight(b) => ar match {
+          case MyNone => br = MySome(b)
+          case MySome(a) => eval(es)(cb(f(a, b)))
+        }
+      }
+      p(es)(a => combiner ! MyLeft(a))
+      p2(es)(b => combiner ! MyRight(b))
+    }
+
+  def choice[A](cond: MyNBP[Boolean])(t: MyNBP[A], f: MyNBP[A]): MyNBP[A] = ???
 }
