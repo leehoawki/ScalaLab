@@ -2,11 +2,12 @@ package ch07
 
 import java.util.concurrent.{Callable, CountDownLatch, ExecutorService}
 
+import ch03.MyList
 import ch04._
 import ch07.fpinscala.parallelism.Actor
 
 trait MyFuture[+A] {
-  private[parallelism] def apply(k: A => Unit): Unit
+  def apply(k: A => Unit): Unit
 }
 
 // My Non Blocking Par
@@ -48,5 +49,14 @@ object MyNBP {
       p2(es)(b => combiner ! MyRight(b))
     }
 
-  def choice[A](cond: MyNBP[Boolean])(t: MyNBP[A], f: MyNBP[A]): MyNBP[A] = ???
+  def choice[A](cond: MyNBP[Boolean])(t: MyNBP[A], f: MyNBP[A]): MyNBP[A] = es => (cb: A => Unit) => cond(es) {
+    b =>
+      if (b) eval(es) {
+        t(es)(cb)
+      } else eval(es) {
+        f(es)(cb)
+      }
+  }
+
+  def choiceN[A](cond: MyNBP[Int])(choices: MyList[MyNBP[A]]): MyNBP[A] = es => (cb: A => Unit) => cond(es)(ind => eval(es)(choices.index(ind)(es)(cb)))
 }

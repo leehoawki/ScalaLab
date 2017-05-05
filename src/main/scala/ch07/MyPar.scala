@@ -40,6 +40,8 @@ object MyPar {
   }
 
   def choice[A](cond: MyPar[Boolean])(t: MyPar[A], f: MyPar[A]): MyPar[A] = es => if (run(es)(cond).get) t(es) else f(es)
+
+  def choiceN[A](n: MyPar[Int])(choices: MyList[MyPar[A]]): MyPar[A] = es => run(es)(choices.index((run(es)(n).get)))
 }
 
 case class UnitFuture[A](get: A) extends Future[A] {

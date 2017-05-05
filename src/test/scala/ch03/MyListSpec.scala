@@ -113,4 +113,10 @@ class MyListSpec extends FlatSpec with Matchers {
     MyList.hasSubsequence(MyList(1, 2, 3), MyNil) shouldEqual true
     MyList.hasSubsequence(MyList(4, 1, 1, 2, 3, 7, 8, 9), MyList(1, 2)) shouldEqual true
   }
+
+  "Index" should "be correct" in {
+    MyList(1, 2, 3).index(0) shouldEqual 1
+    MyList(1, 2, 3).index(1) shouldEqual 2
+    MyList(1, 2, 3).index(2) shouldEqual 3
+  }
 }

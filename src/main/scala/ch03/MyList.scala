@@ -10,6 +10,17 @@ sealed trait MyList[+A] {
   def filter(f: A => Boolean): MyList[A] = foldRight(this, MyNil: MyList[A])((x, y) => if (f(x)) MyCons(x, y) else y)
 
   def append[B >: A](a: MyList[B]): MyList[B] = foldRight(this, a)((x, y) => MyCons(x, y))
+
+  def index(n: Int): A = {
+    def go(count: Int, list: MyList[A]): A = (count, list) match {
+      case (_, MyNil) => throw new IndexOutOfBoundsException()
+      case (c, MyCons(h, t)) if c > 0 => go(c - 1, t)
+      case (c, MyCons(h, t)) if c < 0 => throw new IndexOutOfBoundsException()
+      case (0, MyCons(h, t)) => h
+    }
+
+    go(n, this)
+  }
 }
 
 case object MyNil extends MyList[Nothing]
