@@ -42,6 +42,18 @@ object MyPar {
   def choice[A](cond: MyPar[Boolean])(t: MyPar[A], f: MyPar[A]): MyPar[A] = es => if (run(es)(cond).get) t(es) else f(es)
 
   def choiceN[A](n: MyPar[Int])(choices: MyList[MyPar[A]]): MyPar[A] = es => run(es)(choices.index((run(es)(n).get)))
+
+  def choiceMap[K, V](key: MyPar[K])(choices: Map[K, MyPar[V]]): MyPar[V] = es => run(es)(choices((run(es)(key).get)))
+
+  def chooser[A, B](pa: MyPar[A])(choice: A => MyPar[B]): MyPar[B] = flatMap(pa)(choice)
+
+  def flatMap[A, B](p: MyPar[A])(f: A => MyPar[B]): MyPar[B] = es => run(es)(f(run(es)(p).get))
+
+  def join[A](p: MyPar[MyPar[A]]): MyPar[A] = es => run(es)(run(es)(p).get())
+
+  def joinViaFlatMap[A](a: MyPar[MyPar[A]]): MyPar[A] = flatMap(a)(x => x)
+
+  def flatMapViaJoin[A, B](p: MyPar[A])(f: A => MyPar[B]): MyPar[B] = join(map(p)(f))
 }
 
 case class UnitFuture[A](get: A) extends Future[A] {

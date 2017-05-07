@@ -1,7 +1,6 @@
 package ch06
 
 import ch03.{MyCons, MyList, MyNil}
-import ch04.MyOption
 import ch06.MyStack.{MyStack, pop, push}
 import org.scalatest.{FlatSpec, Matchers}
 

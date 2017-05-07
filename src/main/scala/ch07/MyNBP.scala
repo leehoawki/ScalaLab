@@ -58,5 +58,19 @@ object MyNBP {
       }
   }
 
-  def choiceN[A](cond: MyNBP[Int])(choices: MyList[MyNBP[A]]): MyNBP[A] = es => (cb: A => Unit) => cond(es)(ind => eval(es)(choices.index(ind)(es)(cb)))
+  def map[A, B](pa: MyNBP[A])(f: A => B): MyNBP[B] = map2(pa, unit(()))((a, _) => f(a))
+
+  def choiceN[A](n: MyNBP[Int])(choices: MyList[MyNBP[A]]): MyNBP[A] = es => (cb: A => Unit) => n(es) { ind => eval(es)(choices.index(ind)(es)(cb)) }
+
+  def choiceMap[K, V](key: MyNBP[K])(choices: Map[K, MyNBP[V]]): MyNBP[V] = es => (cb: V => Unit) => key(es) { ind => eval(es)(choices(ind)(es)(cb)) }
+
+  def chooser[A, B](pa: MyNBP[A])(choice: A => MyNBP[B]): MyNBP[B] = flatMap(pa)(choice)
+
+  def flatMap[A, B](p: MyNBP[A])(f: A => MyNBP[B]): MyNBP[B] = es => (cb: B => Unit) => p(es)(a => f(a)(es)(cb))
+
+  def join[A](p: MyNBP[MyNBP[A]]): MyNBP[A] = es => (cb: A => Unit) => p(es)(p2 => eval(es)(p2(es)(cb)))
+
+  def joinViaFlatMap[A](a: MyNBP[MyNBP[A]]): MyNBP[A] = flatMap(a)(x => x)
+
+  def flatMapViaJoin[A, B](p: MyNBP[A])(f: A => MyNBP[B]): MyNBP[B] = join(map(p)(f))
 }
