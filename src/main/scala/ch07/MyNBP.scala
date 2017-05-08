@@ -71,6 +71,11 @@ object MyNBP {
 
   def parMap[A, B](as: MyList[A])(f: A => B): MyNBP[MyList[B]] = sequence(as.map(asyncF(f)))
 
+  def parFilter[A](as: MyList[A])(f: A => Boolean): MyNBP[MyList[A]] = {
+    val pars: MyList[MyNBP[MyList[A]]] = as map (asyncF((a: A) => if (f(a)) MyList(a) else MyNil))
+    map(sequence(pars))(MyList.appendAll)
+  }
+
   def choiceN[A](n: MyNBP[Int])(choices: MyList[MyNBP[A]]): MyNBP[A] = es => (cb: A => Unit) => n(es) { ind => eval(es)(choices.index(ind)(es)(cb)) }
 
   def choiceMap[K, V](key: MyNBP[K])(choices: Map[K, MyNBP[V]]): MyNBP[V] = es => (cb: V => Unit) => key(es) { ind => eval(es)(choices(ind)(es)(cb)) }
