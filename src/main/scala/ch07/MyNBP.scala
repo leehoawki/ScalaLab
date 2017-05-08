@@ -2,7 +2,7 @@ package ch07
 
 import java.util.concurrent.{Callable, CountDownLatch, ExecutorService}
 
-import ch03.MyList
+import ch03.{MyCons, MyList, MyNil}
 import ch04._
 import ch07.fpinscala.parallelism.Actor
 
@@ -25,6 +25,8 @@ object MyNBP {
   def unit[A](a: A): MyNBP[A] = es => (cb: A => Unit) => cb(a)
 
   def fork[A](a: => MyNBP[A]): MyNBP[A] = es => (cb: A => Unit) => eval(es)(a(es)(cb))
+
+  def lazyUnit[A](a: => A): MyNBP[A] = fork(unit(a))
 
   def eval(es: ExecutorService)(r: => Unit): Unit =
     es.submit(new Callable[Unit] {
@@ -58,7 +60,16 @@ object MyNBP {
       }
   }
 
+  def asyncF[A, B](f: A => B): A => MyNBP[B] = a => lazyUnit(f(a))
+
+  def sequence[A](as: MyList[MyNBP[A]]): MyNBP[MyList[A]] = as match {
+    case MyNil => unit(MyNil)
+    case MyCons(h, t) => map2(h, sequence(t))(MyCons.apply)
+  }
+
   def map[A, B](pa: MyNBP[A])(f: A => B): MyNBP[B] = map2(pa, unit(()))((a, _) => f(a))
+
+  def parMap[A, B](as: MyList[A])(f: A => B): MyNBP[MyList[B]] = sequence(as.map(asyncF(f)))
 
   def choiceN[A](n: MyNBP[Int])(choices: MyList[MyNBP[A]]): MyNBP[A] = es => (cb: A => Unit) => n(es) { ind => eval(es)(choices.index(ind)(es)(cb)) }
 
