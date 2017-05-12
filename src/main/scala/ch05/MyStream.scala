@@ -51,7 +51,7 @@ sealed trait MyStream[+A] {
     case MyScons(h, t) => if (p(h())) MySome((h()), t()) else MyNone
   }
 
-  def zipWith[B >: A, C](s2: MyStream[B])(f: (A, B) => C): MyStream[C] = unfold((this, s2)) {
+  def zipWith[B, C](s2: MyStream[B])(f: (A, B) => C): MyStream[C] = unfold((this, s2)) {
     case (MyEmpty, _) => MyNone
     case (_, MyEmpty) => MyNone
     case (MyScons(h1, t1), MyScons(h2, t2)) => MySome((f(h1(), h2()), (t1(), t2())))
@@ -83,6 +83,8 @@ sealed trait MyStream[+A] {
     case MyEmpty => MyNone
     case a@MyScons(h, t) => MySome((a.foldRight(z)(f), t()))
   }
+
+  def find(p: A => Boolean): MyOption[A] = foldRight(MyNone: MyOption[A])((x, y) => if (p(x)) return MySome(x) else MyNone)
 }
 
 case object MyEmpty extends MyStream[Nothing] {

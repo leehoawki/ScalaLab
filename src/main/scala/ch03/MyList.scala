@@ -144,4 +144,11 @@ object MyList {
     else
       false
   }
+
+  def fill[A](n: Int)(elem: => A): MyList[A] = {
+    @tailrec
+    def go(count: Int, list: MyList[A]): MyList[A] = if (count > 0) go(count - 1, MyCons(elem, list)) else list
+
+    go(n, MyNil)
+  }
 }
