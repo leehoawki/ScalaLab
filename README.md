@@ -20,3 +20,5 @@ Exercises in Functional Programming in Scala.
 [MyPar](/src/main/scala/ch07/MyPar.scala)
 
 [My Non-Blocking-Par](/src/main/scala/ch07/MyNBP.scala)
+
+[MyGen](/src/main/scala/ch08/MyGen.scala)

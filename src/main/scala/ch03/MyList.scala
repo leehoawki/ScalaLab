@@ -9,6 +9,16 @@ sealed trait MyList[+A] {
 
   def filter(f: A => Boolean): MyList[A] = foldRight(this, MyNil: MyList[A])((x, y) => if (f(x)) MyCons(x, y) else y)
 
+  def exists(f: A => Boolean): Boolean = {
+    def go(list: MyList[A]): Boolean = list match {
+      case MyNil => false
+      case MyCons(x, xs) if f(x) => true
+      case MyCons(x, xs) => go(xs)
+    }
+
+    go(this)
+  }
+
   def append[B >: A](a: MyList[B]): MyList[B] = foldRight(this, a)((x, y) => MyCons(x, y))
 
   def index(n: Int): A = {
