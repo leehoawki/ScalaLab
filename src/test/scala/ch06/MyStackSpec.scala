@@ -14,7 +14,7 @@ class MyStackSpec extends FlatSpec with Matchers {
       } yield ()
     }
 
-    stackRun.run(MyList(1, 2, 3))._2 shouldEqual MyCons(6, MyCons(5, MyCons(4, MyCons(1, MyCons(2, MyCons(3, MyNil))))))
+    stackRun.run(MyList(1, 2, 3))._2 shouldEqual MyList(6, 5, 4, 1, 2, 3)
   }
 
   "Pop" should "be correct" in {

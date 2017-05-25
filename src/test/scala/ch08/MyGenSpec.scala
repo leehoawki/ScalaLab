@@ -27,6 +27,6 @@ class MyGenSpec extends FlatSpec with Matchers {
       val max = 10
       !ns.exists(_ > max)
     }
-    println(maxProp.run(1000, 1, SimpleRNG(0)))
+    maxProp.run(100, 100, SimpleRNG(0)) shouldEqual Passed
   }
 }

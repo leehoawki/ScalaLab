@@ -24,13 +24,15 @@ sealed trait MyList[+A] {
   def index(n: Int): A = {
     def go(count: Int, list: MyList[A]): A = (count, list) match {
       case (_, MyNil) => throw new IndexOutOfBoundsException()
-      case (c, MyCons(h, t)) if c > 0 => go(c - 1, t)
-      case (c, MyCons(h, t)) if c < 0 => throw new IndexOutOfBoundsException()
-      case (0, MyCons(h, t)) => h
+      case (c, MyCons(_, t)) if c > 0 => go(c - 1, t)
+      case (c, MyCons(_, t)) if c < 0 => throw new IndexOutOfBoundsException()
+      case (0, MyCons(h, _)) => h
     }
 
     go(n, this)
   }
+
+  def ::[B >: A](b: B) = MyCons(b, this)
 }
 
 case object MyNil extends MyList[Nothing]

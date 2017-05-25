@@ -3,7 +3,7 @@ package ch06
 import ch03.{MyCons, MyList, MyNil}
 import ch04.{MyNone, MyOption, MySome}
 
-object MyStack extends App {
+object MyStack {
   type MyStack = MyList[Int]
 
   def pop = MyState[MyStack, MyOption[Int]] {

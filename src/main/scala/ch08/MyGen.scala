@@ -56,7 +56,7 @@ object Prop {
   }
 
   def forAll[A](as: Gen[A])(f: A => Boolean): Prop = Prop {
-    (max, n, rng) =>
+    (_, n, rng) =>
       randomStream(as)(rng).zipWith(MyStream.from(0)) {
         case (a, i) => try {
           if (f(a)) Passed else Falsified(a.toString, i)
