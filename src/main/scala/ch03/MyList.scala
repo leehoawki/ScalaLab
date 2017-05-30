@@ -33,6 +33,12 @@ sealed trait MyList[+A] {
   }
 
   def ::[B >: A](b: B) = MyCons(b, this)
+
+  def ++[B >: A](a: MyList[B]): MyList[B] = append(a)
+
+  def foldLeft[B](z: B)(f: (B, A) => B): B = MyList.foldLeft(this, z)(f)
+
+  def foldRight[B](z: B)(f: (A, B) => B): B = MyList.foldRight(this, z)(f)
 }
 
 case object MyNil extends MyList[Nothing]

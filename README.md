@@ -24,3 +24,9 @@ Exercises in Functional Programming in Scala.
 [MyGen](/src/main/scala/ch08/MyGen.scala)
 
 [MyParser](/src/main/scala/ch09/MyParser.scala)
+
+[MyMonoid](/src/main/scala/ch10/MyMonoid.scala)
+
+[MyFunctor](/src/main/scala/ch11/MyFunctor.scala)
+
+[MyMonad](/src/main/scala/ch11/MyMonad.scala)

@@ -10,6 +10,11 @@ sealed trait MyEither[+E, +A] {
   def orElse[EE >: E, B >: A](b: => MyEither[EE, B]): MyEither[EE, B]
 
   def map2[EE >: E, B, C](b: MyEither[EE, B])(f: (A, B) => C): MyEither[EE, C]
+
+  def fold[B](fe: E => B, fa: A => B): B = this match {
+    case MyRight(a) => fa(a)
+    case MyLeft(e) => fe(e)
+  }
 }
 
 case class MyLeft[+E](value: E) extends MyEither[E, Nothing] {
